@@ -13,7 +13,11 @@
 
 package com.tacitknowledge.util.discovery;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -25,8 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Utility class for dealing with the classpath. 
  * 
@@ -34,6 +36,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class ClasspathUtils
 {
+    private static Log log = LogFactory.getLog(ClasspathUtils.class);
+
     /**
      * Hidden constructor for utility class.
      */
@@ -219,9 +223,17 @@ public final class ClasspathUtils
         for (int i = 0; i < urls.length; i++)
         {
             URL url = urls[i];
-            components.add(new File(url.getPath()).getPath());
+            File urlFile = new File(url.getPath());
+            if (urlFile.exists()) {
+                try {
+                    urlFile = urlFile.getCanonicalFile();
+                } catch (IOException e) {
+                    log.warn("Error resolving filename to canonical file: " + e.toString());
+                }
+            }
+            components.add(urlFile.getPath());
         }
-        
+
         return components;
     }
 }
