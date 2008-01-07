@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -73,12 +72,123 @@ public final class ClasspathUtils
         }
         return directories;
     }
-    
+
     /**
-     * If the system is running on Tomcat, this method will parse the 
-     * <code>common.loader</code> property to reach deeper into the 
+     * Returns the classpath as a list of the names of archive files.  Any
+     * classpath component that is not an archive will be ignored.
+     *
+     * @return the classpath as a list of archive file names; if no archives can
+     *         be found then an empty list will be returned
+     */
+    public static List getClasspathArchives()
+    {
+        List archives = new ArrayList();
+        List components = getClasspathComponents();
+        for (Iterator i = components.iterator(); i.hasNext();)
+        {
+            String possibleDir = (String) i.next();
+            File file = new File(possibleDir);
+            if (file.isFile()
+                && (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")))
+            {
+                archives.add(possibleDir);
+            }
+        }
+        return archives;
+    }
+
+    /**
+     * Returns the classpath as a list directory and archive names.
+     *
+     * @return the classpath as a list of directory and archive file names; if
+     *         no components can be found then an empty list will be returned
+     */
+    public static List getClasspathComponents()
+    {
+        List components = new LinkedList();
+
+        // walk the classloader hierarchy, trying to get all the components we can
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+        while ((null != cl) && (cl instanceof URLClassLoader))
+        {
+            URLClassLoader ucl = (URLClassLoader) cl;
+            components.addAll(getUrlClassLoaderClasspathComponents(ucl));
+
+            try
+            {
+                cl = ucl.getParent();
+            }
+            catch (SecurityException se)
+            {
+                cl = null;
+            }
+        }
+
+        // walking the hierarchy doesn't guarantee we get everything, so
+        // lets grab the system classpath for good measure.
+        String classpath = System.getProperty("java.class.path");
+        String separator = System.getProperty("path.separator");
+        StringTokenizer st = new StringTokenizer(classpath, separator);
+        while (st.hasMoreTokens())
+        {
+            String component = st.nextToken();
+            // Calling File.getPath() cleans up the path so that it's using
+            // the proper path separators for the host OS
+            component = getCanonicalPath(component);
+            components.add(component);
+        }
+
+        // Set removes any duplicates, return a list for the api.
+        return new LinkedList(new HashSet(components));
+    }
+
+    /**
+     * Get the list of classpath components
+     *
+     * @param ucl url classloader
+     * @return List of classpath components
+     */
+    private static List getUrlClassLoaderClasspathComponents(URLClassLoader ucl)
+    {
+        List components = new ArrayList();
+
+        URL[] urls = new URL[0];
+
+        // Workaround for running on JBoss with UnifiedClassLoader3 usage
+        // We need to invoke getClasspath() method instead of getURLs()
+        if (ucl.getClass().getName().equals("org.jboss.mx.loading.UnifiedClassLoader3"))
+        {
+            try
+            {
+                Method classPathMethod = ucl.getClass().getMethod("getClasspath", new Class[] {});
+                urls = (URL[]) classPathMethod.invoke(ucl, new Object[0]);
+            }
+            catch(Exception e)
+            {
+                LogFactory.getLog(ClasspathUtils.class).debug("Error invoking getClasspath on UnifiedClassLoader3: ", e);
+            }
+        }
+        else
+        {
+        	// Use regular ClassLoader method to get classpath
+            urls = ucl.getURLs();
+        }
+
+        for (int i = 0; i < urls.length; i++)
+        {
+            URL url = urls[i];
+            components.add(getCanonicalPath(url.getPath()));
+        }
+
+        return components;
+    }
+
+    /**
+     * If the system is running on Tomcat, this method will parse the
+     * <code>common.loader</code> property to reach deeper into the
      * classpath to get Tomcat common paths
-     * 
+     *
      * @return a list of paths or null if tomcat paths not found
      */
     private static List getTomcatPaths()
@@ -114,119 +224,13 @@ public final class ClasspathUtils
         }
         while (!doneReplace);
         String[] paths = commonClasspath.split(",");
-        List pathList = Arrays.asList(paths);
+
+        List pathList = new ArrayList(paths.length);
+        for (int i = 0; i < paths.length; i++) {
+            String path = paths[i];
+            pathList.add(getCanonicalPath(path));
+        }
         return pathList;
-    }
-    
-    /**
-     * Returns the classpath as a list of the names of archive files.  Any
-     * classpath component that is not an archive will be ignored. 
-     * 
-     * @return the classpath as a list of archive file names; if no archives can
-     *         be found then an empty list will be returned
-     */
-    public static List getClasspathArchives()
-    {
-        List archives = new ArrayList();
-        List components = getClasspathComponents();
-        for (Iterator i = components.iterator(); i.hasNext();)
-        {
-            String possibleDir = (String) i.next();
-            File file = new File(possibleDir);
-            if (file.isFile()
-                && (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")))
-            {
-                archives.add(possibleDir);
-            }
-        }
-        return archives;
-    }
-    
-    /**
-     * Returns the classpath as a list directory and archive names.
-     * 
-     * @return the classpath as a list of directory and archive file names; if
-     *         no components can be found then an empty list will be returned
-     */
-    public static List getClasspathComponents()
-    {
-        List components = new LinkedList();
-
-        // walk the classloader hierarchy, trying to get all the components we can
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        
-        while ((null != cl) && (cl instanceof URLClassLoader)) 
-        {
-            URLClassLoader ucl = (URLClassLoader) cl;
-            components.addAll(getUrlClassLoaderClasspathComponents(ucl));
-            
-            try
-            {
-                cl = ucl.getParent();
-            }
-            catch (SecurityException se)
-            {
-                cl = null;
-            }
-        }
-
-        // walking the hierarchy doesn't guarantee we get everything, so 
-        // lets grab the system classpath for good measure.
-        String classpath = System.getProperty("java.class.path");
-        String separator = System.getProperty("path.separator");
-        StringTokenizer st = new StringTokenizer(classpath, separator);
-        while (st.hasMoreTokens())
-        {
-            String component = st.nextToken();
-            // Calling File.getPath() cleans up the path so that it's using
-            // the proper path separators for the host OS
-            component = getCanonicalPath(component);
-            components.add(component);
-        }
-
-        // Set removes any duplicates, return a list for the api.
-        return new LinkedList(new HashSet(components));
-    }
-
-    /**
-     * Get the list of classpath components
-     * 
-     * @param ucl url classloader
-     * @return List of classpath components
-     */
-    protected static List getUrlClassLoaderClasspathComponents(URLClassLoader ucl)
-    {
-        List components = new ArrayList();
-
-        URL[] urls = new URL[0];
-
-        // Workaround for running on JBoss with UnifiedClassLoader3 usage
-        // We need to invoke getClasspath() method instead of getURLs()
-        if (ucl.getClass().getName().equals("org.jboss.mx.loading.UnifiedClassLoader3"))
-        {
-            try
-            {
-                Method classPathMethod = ucl.getClass().getMethod("getClasspath", new Class[] {});
-                urls = (URL[]) classPathMethod.invoke(ucl, new Object[0]);
-            }
-            catch(Exception e)
-            {
-                LogFactory.getLog(ClasspathUtils.class).debug("Error invoking getClasspath on UnifiedClassLoader3: ", e);
-            }
-        }
-        else
-        {
-        	// Use regular ClassLoader method to get classpath
-            urls = ucl.getURLs();
-        }
-
-        for (int i = 0; i < urls.length; i++)
-        {
-            URL url = urls[i];
-            components.add(getCanonicalPath(url.getPath()));
-        }
-
-        return components;
     }
 
     private static String getCanonicalPath(String path) {
