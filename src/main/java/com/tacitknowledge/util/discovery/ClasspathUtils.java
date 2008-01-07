@@ -180,7 +180,7 @@ public final class ClasspathUtils
             String component = st.nextToken();
             // Calling File.getPath() cleans up the path so that it's using
             // the proper path separators for the host OS
-            component = new File(component).getPath();
+            component = getCanonicalPath(component);
             components.add(component);
         }
 
@@ -223,17 +223,27 @@ public final class ClasspathUtils
         for (int i = 0; i < urls.length; i++)
         {
             URL url = urls[i];
-            File urlFile = new File(url.getPath());
-            if (urlFile.exists()) {
-                try {
-                    urlFile = urlFile.getCanonicalFile();
-                } catch (IOException e) {
-                    log.warn("Error resolving filename to canonical file: " + e.toString());
-                }
-            }
-            components.add(urlFile.getPath());
+            components.add(getCanonicalPath(url.getPath()));
         }
 
         return components;
+    }
+
+    private static String getCanonicalPath(String path) {
+        File file = new File(path);
+        String canonicalPath = null;
+        if (file.exists()) {
+            try {
+                canonicalPath = file.getCanonicalPath();
+            } catch (IOException e) {
+                log.warn("Error resolving filename to canonical file: " + e.toString());
+            }
+        }
+
+        if (canonicalPath == null) {
+            canonicalPath = file.getPath();
+        }
+
+        return canonicalPath;
     }
 }
