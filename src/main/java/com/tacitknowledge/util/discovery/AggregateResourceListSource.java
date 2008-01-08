@@ -31,7 +31,7 @@ public class AggregateResourceListSource implements ResourceListSource
     /**
      * The list of sources to aggregate
      */
-    private Set sources = new HashSet();
+    private List sources = new ArrayList();
     
     /**
      * Creates a new <code>AggregateResourceListSource</code> containing
@@ -77,7 +77,7 @@ public class AggregateResourceListSource implements ResourceListSource
      */
     public String[] getResources(String basePath, ResourceCriteria criteria)
     {
-        List resourceNames = new ArrayList();
+        Set resourceNames = new HashSet();
         for (Iterator i = sources.iterator(); i.hasNext();)
         {
             ResourceListSource source = (ResourceListSource) i.next();
