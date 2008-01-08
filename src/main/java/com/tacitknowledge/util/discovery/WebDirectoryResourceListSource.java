@@ -37,7 +37,7 @@ class WebDirectoryResourceListSource extends DirectoryResourceListSource
      */
     public WebDirectoryResourceListSource(String path)
     {
-        this.path = path;
+        this.path = ClasspathUtils.getCanonicalPath(path);
     }
     
     /**

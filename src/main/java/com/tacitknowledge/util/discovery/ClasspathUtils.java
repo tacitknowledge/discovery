@@ -143,6 +143,24 @@ public final class ClasspathUtils
         return new LinkedList(new HashSet(components));
     }
 
+    public static String getCanonicalPath(String path) {
+        File file = new File(path);
+        String canonicalPath = null;
+        if (file.exists()) {
+            try {
+                canonicalPath = file.getCanonicalPath();
+            } catch (IOException e) {
+                log.warn("Error resolving filename to canonical file: " + e.toString());
+            }
+        }
+
+        if (canonicalPath == null) {
+            canonicalPath = file.getPath();
+        }
+
+        return canonicalPath;
+    }
+
     /**
      * Get the list of classpath components
      *
@@ -231,23 +249,5 @@ public final class ClasspathUtils
             pathList.add(getCanonicalPath(path));
         }
         return pathList;
-    }
-
-    private static String getCanonicalPath(String path) {
-        File file = new File(path);
-        String canonicalPath = null;
-        if (file.exists()) {
-            try {
-                canonicalPath = file.getCanonicalPath();
-            } catch (IOException e) {
-                log.warn("Error resolving filename to canonical file: " + e.toString());
-            }
-        }
-
-        if (canonicalPath == null) {
-            canonicalPath = file.getPath();
-        }
-
-        return canonicalPath;
     }
 }

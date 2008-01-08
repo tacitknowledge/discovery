@@ -37,7 +37,7 @@ class WebArchiveResourceListSource extends ArchiveResourceListSource
      */
     public WebArchiveResourceListSource(String path)
     {
-        this.path = path;
+        this.path = ClasspathUtils.getCanonicalPath(path);
     }
     
     /**

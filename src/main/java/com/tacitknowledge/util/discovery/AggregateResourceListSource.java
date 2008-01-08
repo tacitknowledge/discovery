@@ -15,8 +15,10 @@ package com.tacitknowledge.util.discovery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Combines two or more <code>ResourceListSource</code> implementations.
@@ -29,7 +31,7 @@ public class AggregateResourceListSource implements ResourceListSource
     /**
      * The list of sources to aggregate
      */
-    private List sources = new ArrayList();
+    private Set sources = new HashSet();
     
     /**
      * Creates a new <code>AggregateResourceListSource</code> containing
