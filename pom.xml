@@ -13,5 +13,11 @@
 		<artifactId>tk-common</artifactId>	
 		<version>1.0</version>	
 	</parent>
+	<properties>
+		<emma.coverage.class>100</emma.coverage.class>
+		<emma.coverage.method>79</emma.coverage.method>
+		<emma.coverage.block>79</emma.coverage.block>
+		<emma.coverage.line>74</emma.coverage.line>
+	</properties>
 </project>
 
