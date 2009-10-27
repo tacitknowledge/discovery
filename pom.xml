@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>tk-discovery</artifactId>
-	<version>1.0.0</version>
-	<name>Discovery</name>
-	<url>http://repo1.tacitknowledge.com/repository/public/discovery</url>
-	<description>Tacit Knowledge discovery library</description>
-	<parent>
-		<groupId>com.tacitknowledge</groupId>
-		<artifactId>tk-common</artifactId>	
-		<version>1.0</version>	
-	</parent>
-	<properties>
-		<emma.coverage.class>100</emma.coverage.class>
-		<emma.coverage.method>79</emma.coverage.method>
-		<emma.coverage.block>79</emma.coverage.block>
-		<emma.coverage.line>74</emma.coverage.line>
-	</properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.tacitknowledge</groupId>
+        <artifactId>tk-common</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tk-discovery</artifactId>
+    <version>1.0.1</version>
+
+    <name>Discovery</name>
+    <description>Tacit Knowledge discovery library</description>
+    <url>http://repo1.tacitknowledge.com/repository/public/discovery</url>
+
+    <properties>
+        <emma.coverage.class>100</emma.coverage.class>
+        <emma.coverage.method>79</emma.coverage.method>
+        <emma.coverage.block>79</emma.coverage.block>
+        <emma.coverage.line>74</emma.coverage.line>
+    </properties>
 </project>
 
