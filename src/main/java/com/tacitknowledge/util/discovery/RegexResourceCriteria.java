@@ -1,8 +1,10 @@
-/* Copyright 2007 Tacit Knowledge LLC
+/* Copyright 2004 Tacit Knowledge
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * Licensed under the Tacit Knowledge Open License, Version 1.0 (the "License");
- * you may not use this file except in compliance with the License. You may
- * obtain a copy of the License at http://www.tacitknowledge.com/licenses-1.0.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +23,6 @@ import java.util.regex.Pattern;
  * Matches a resource based on a JDK 1.4-style regular expression.
  * 
  * @author  Scott Askew (scott@tacitknowledge.com)
- * @version $Id: RegexResourceCriteria.java,v 1.1 2004/03/15 07:39:43 scott Exp $
  * @see     java.util.regex.Pattern
  */
 public class RegexResourceCriteria implements ResourceCriteria
