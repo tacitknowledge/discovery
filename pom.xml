@@ -6,6 +6,12 @@
   <version>1.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <name>Resource Discovery</name>
   <description>Java Resource Discovery Library</description>
   <url>https://github.com/tacitknowledge/discovery</url>
