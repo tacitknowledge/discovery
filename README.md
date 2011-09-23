@@ -4,6 +4,16 @@ Discovery
 Discovery is used to detect resources (files or interface
 implementations) in a Java classpath.
 
+Maven
+-----
+
+    <dependency>
+      <groupId>com.tacitknowledge</groupId>
+      <artifactId>discovery</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+
+
 Simple Examples
 ---------------
 
