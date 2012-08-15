@@ -121,7 +121,7 @@ public class ClasspathReaderTest extends TestCase
         assertFalse(modified);
 
         // wait for reload time to expire, should be true
-        Thread.sleep(2000);
+        Thread.sleep(1500);
         modified = reader.isModified("com" + File.separator
                                      + "tacitknowledge" + File.separator
                                      + "util" + File.separator
