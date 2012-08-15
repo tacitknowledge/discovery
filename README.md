@@ -10,7 +10,7 @@ Maven
     <dependency>
       <groupId>com.tacitknowledge</groupId>
       <artifactId>discovery</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.5</version>
     </dependency>
 
 
