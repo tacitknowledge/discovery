@@ -47,11 +47,10 @@ class WebArchiveResourceListSource extends ArchiveResourceListSource
     protected List getJars()
     {
         String libPath = path + File.separator + "lib";
-        List jars = new ArrayList();
+        List<String> jars = new ArrayList<String>();
         String[] entries = getLibEntries(libPath);
-        for (int i = 0; i < entries.length; i++)
+        for (String jar : entries)
         {
-            String jar = entries[i];
             if (jar.endsWith(".jar") || jar.endsWith(".zip"))
             {
                 String jarName = libPath + File.separator + jar;
@@ -68,12 +67,17 @@ class WebArchiveResourceListSource extends ArchiveResourceListSource
      * 
      * @param  dir the dir containing the files to return
      * @return the files and directories in the given directory, or
-     *         <code>null</code> if the given directory does not exist or is
+     *         an empty array if the given directory does not exist or is
      *         a file.
      */
     protected String[] getLibEntries(String dir)
     {
+        String[] entries = new String[0];
         File libdir = new File(dir);
-        return libdir.list();
+        if (libdir.exists() && libdir.isDirectory())
+        {
+            entries = libdir.list();
+        }
+        return entries;
     }
 }
